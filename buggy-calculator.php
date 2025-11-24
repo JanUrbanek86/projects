@@ -1,32 +1,57 @@
-<?php
-
-function calculate($num1, $operator, $num2) {
-    if (!is_numeric($num1) || !is_numeric($num2)) {
-        return "Invalid input. Please enter numbers.";
-    }
-
-    switch ($operator) {
-        case '+':
-            return htmlspecialchars($num1 + $num2);
-        case '-':
-            return htmlspecialchars($num1 - $num2);
-        case '*':
-            return htmlspecialchars($num1 * $num2);
-        case '/':
-            if ($num2 == 0) {
-                return "Error: Division by zero.";
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kalkulačka</title>
+</head>
+<body>
+    <h1>Kalkulačka</h1>
+    
+    <form method="POST">
+        <input type="text" name="num1" placeholder="Číslo 1" required>
+        <select name="operator">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">*</option>
+            <option value="/">/</option>
+        </select>
+        <input type="text" name="num2" placeholder="Číslo 2" required>
+        <button type="submit">Vypočítat</button>
+    </form>
+    
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $num1 = $_POST['num1'];
+        $num2 = $_POST['num2'];
+        $operator = $_POST['operator'];
+        
+        // Validace vstupu
+        if (!is_numeric($num1) || !is_numeric($num2)) {
+            echo "<p style='color:red'>Chyba: Zadejte platná čísla!</p>";
+        } else {
+            $result = null;
+            
+            // Výpočet s opraveným operátorem
+            if ($operator == '+') {
+                $result = $num1 + $num2;
+            } elseif ($operator == '-') {  // OPRAVENO: == místo =
+                $result = $num1 - $num2;
+            } elseif ($operator == '*') {
+                $result = $num1 * $num2;
+            } elseif ($operator == '/') {
+                // Ošetření dělení nulou
+                if ($num2 == 0) {
+                    echo "<p style='color:red'>Chyba: Nelze dělit nulou!</p>";
+                } else {
+                    $result = $num1 / $num2;
+                }
             }
-            return htmlspecialchars($num1 / $num2);
-        default:
-            return "Invalid operator. Please use +, -, *, or /.";
+            
+            // Zabezpečený výstup
+            if ($result !== null) {
+                echo "<h2>Výsledek: " . htmlspecialchars($result) . "</h2>";
+            }
+        }
     }
-}
-
-if (isset($_GET['num1']) && isset($_GET['operator']) && isset($_GET['num2'])) {
-    $result = calculate($_GET['num1'], $_GET['operator'], $_GET['num2']);
-    echo $result;
-} else {
-    echo "Please provide num1, operator, and num2 as GET parameters.";
-}
-
-?>
+    ?>
+</body>
+</html>
