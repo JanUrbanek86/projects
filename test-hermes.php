@@ -1,5 +1,15 @@
 <?php
-echo "Nous-Hermes model funguje!";
-echo "<br>";
-echo date("Y-m-d H:i:s");
+// New code for calculator in test-hermes.php
+function calculate($num1, $num2, $operator) {
+    switch ($operator) {
+        case '+':
+            return $num1 + $num2;
+        case '-':
+            return $num1 - $num2;
+        case '*':
+            return $num1 * $num2;
+        case '/':
+            return $num1 / $num2;
+    }
+}
 ?>
