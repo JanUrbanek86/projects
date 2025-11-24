@@ -1,43 +1,32 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Kalkulaèka</title>
-</head>
-<body>
-    <h1>Kalkulaèka</h1>
-    
-    <form method="POST">
-        <input type="text" name="num1" placeholder="Èíslo 1" required>
-        <select name="operator">
-            <option value="+">+</option>
-            <option value="-">-</option>
-            <option value="*">*</option>
-            <option value="/">/</option>
-        </select>
-        <input type="text" name="num2" placeholder="Èíslo 2" required>
-        <button type="submit">Vypoèítat</button>
-    </form>
-    
-    <?php
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $num1 = $_POST['num1'];
-        $num2 = $_POST['num2'];
-        $operator = $_POST['operator'];
-        
-        // CHYBA #1: Chybí validace vstupu
-        
-        if ($operator == '+') {
-            $result = $num1 + $num2;
-        } elseif ($operator = '-') {  // CHYBA #2: = místo ==
-            $result = $num1 - $num2;
-        } elseif ($operator == '*') {
-            $result = $num1 * $num2;
-        } elseif ($operator == '/') {
-            $result = $num1 / $num2;  // CHYBA #3: Dìlení nulou
-        }
-        
-        echo "<h2>Výsledek: $result</h2>";  // CHYBA #4: Nezabezpeèený výstup
+<?php
+
+function calculate($num1, $operator, $num2) {
+    if (!is_numeric($num1) || !is_numeric($num2)) {
+        return "Invalid input. Please enter numbers.";
     }
-    ?>
-</body>
-</html>
+
+    switch ($operator) {
+        case '+':
+            return htmlspecialchars($num1 + $num2);
+        case '-':
+            return htmlspecialchars($num1 - $num2);
+        case '*':
+            return htmlspecialchars($num1 * $num2);
+        case '/':
+            if ($num2 == 0) {
+                return "Error: Division by zero.";
+            }
+            return htmlspecialchars($num1 / $num2);
+        default:
+            return "Invalid operator. Please use +, -, *, or /.";
+    }
+}
+
+if (isset($_GET['num1']) && isset($_GET['operator']) && isset($_GET['num2'])) {
+    $result = calculate($_GET['num1'], $_GET['operator'], $_GET['num2']);
+    echo $result;
+} else {
+    echo "Please provide num1, operator, and num2 as GET parameters.";
+}
+
+?>
