@@ -1,5 +1,8 @@
 <?php
-declare(strict_types=1);
+$mysqli = new mysqli('localhost', 'root', '', 'cert');
+if ($mysqli->connect_error) {
+    die('Neboda se připojit k databázi.');
+}
 ?>
 <!doctype html>
 <html lang="cs">
