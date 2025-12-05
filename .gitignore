@@ -12,3 +12,17 @@ Desktop.ini
 
 # Aider
 .aider*
+
+# AI artifacts
+*podle vašich*
+*budu navrhnout*
+*path/to/*
+
+# Temp files
+*.tmp
+*.log
+.aider*
+
+# Windows
+Thumbs.db
+Desktop.ini
