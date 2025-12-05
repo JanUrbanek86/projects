@@ -1,7 +1,29 @@
 <?php
-$mysqli = new mysqli('localhost', 'root', '', 'cert');
-if ($mysqli->connect_error) {
+declare(strict_types=1);
+
+$dsn = 'mysql:host=localhost;dbname=cert;charset=utf8mb4';
+try {
+    $pdo = new PDO($dsn, 'root', '');
+} catch (PDOException $e) {
     die('Neboda se připojit k databázi.');
+}
+
+$message = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $login   = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    // Heslo je uložené v MD5
+    $hashedPassword = md5($password);
+
+    $stmt = $pdo->prepare('SELECT 1 FROM uzivatele WHERE login = :login AND heslo = :heslo');
+    $stmt->execute(['login' => $login, 'heslo' => $hashedPassword]);
+
+    if ($stmt->fetch()) {
+        $message = 'Vítej, jsi ověřen.';
+    } else {
+        $message = 'Nick neexistuje.';
+    }
 }
 ?>
 <!doctype html>
@@ -16,8 +38,11 @@ if ($mysqli->connect_error) {
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-4">
+      <?php if ($message !== '') : ?>
+        <div class="alert alert-info text-center" role="alert"><?php echo htmlspecialchars($message); ?></div>
+      <?php endif; ?>
       <h2 class="text-center mb-4">Přihlášení</h2>
-      <form action="#" method="post">
+      <form action="" method="post">
         <div class="mb-3">
           <label for="email" class="form-label">E-mail</label>
           <input type="email" class="form-control" id="email" name="email" required>
